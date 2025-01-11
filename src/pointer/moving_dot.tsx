@@ -17,6 +17,7 @@ export default function MovingDot() {
         position: 'relative',
         width: '100vw',
         height: '100vh',
+        backgroundColor: 'rgba(0, 0, 0, 0)',
       }}>
       <div style={{
         position: 'absolute',
