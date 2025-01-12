@@ -43,6 +43,19 @@
   color: #888;
 }
 
+.default_background {
+  z-index: 0;
+  margin-top: -100vh;
+}
+
+.moving_dot {
+  z-index: 2;
+}
+
+.parent_container {
+  position: relative;
+}
+
 body {
   min-height: 0;
 }
