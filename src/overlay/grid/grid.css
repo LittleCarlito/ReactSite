@@ -3,29 +3,27 @@
     /* If changing below make sure to update grid column/row sizes */
     width: 50px;
     height: 50px;
-    border: 10px solid greenyellow;
-    /* TODO This should be applied through ts where needed and probably to higher up div*/
-    /* position: relative; */
+    border: 3px solid greenyellow;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-sizing: border-box;
 }
 
 .grid_container {
     background-color: rgba(0, 0, 0, 0);
-    width: 250px;
-    height: 250px;
-    border: 20px solid red;
+    border: 5px solid red;
     display: grid;
     grid-template-columns: repeat(5, 50px);
     grid-template-rows: repeat(5, 50px);
     gap: 0px;
-    /* TODO This should be applied through ts where needed and probably to higher up div*/
-    /* position: relative; */
+    box-sizing: border-box;
 }
  .grid_control{
     background-color: rgba(0, 0, 0, 0);
-    border: 20px solid purple;
+    border: 10px solid purple;
     display: grid;
     gap: 0;
+    box-sizing: border-box;
  }
+ 

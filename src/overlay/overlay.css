@@ -1,0 +1,14 @@
+.overlay_container {
+    position: relative;
+    background-color: transparent;
+}
+
+.moving_dot {
+    z-index: 0;
+    position: absolute;
+}
+
+.dot_grid {
+    z-index: 1;
+    position: relative;
+}

@@ -1,31 +1,24 @@
-import { useState } from 'react';
 import './pointer.css'
 
-export default function MovingDot() {
-  const [position, setPosition] = useState({
-    x: 0,
-    y: 0
-  });
+type MovingDotProps = {
+  x_position: number;
+  y_position: number;
+}
+
+export default function MovingDot( {x_position, y_position}: MovingDotProps ) {
   return (
     <>
-      <div className='background'
-        onPointerMove={e => {
-          setPosition({
-            x: e.clientX,
-            y: e.clientY
-          });
-        }}>
-        <div className='moving_dot'
+      <div className='moving_dot'
         style={{
           position: 'absolute',
           backgroundColor: 'red',
           borderRadius: '50%',
-          transform: `translate(${position.x}px, ${position.y}px)`,
+          transform: `translate(${x_position}px, ${y_position}px)`,
           left: -10,
           top: -10,
           width: 20,
           height: 20,
-        }}/>
+        }}>
       </div>
     </>
   );

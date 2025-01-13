@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
 import GridContainer from './grid_container';
 import './grid.css'
+import MovingDot from '../pointer/moving_dot';
 export default function GridControl() {
     const [width_container_count, set_width_count] = useState((window.innerWidth / 250) + 1)
     const [height_container_count, set_height_count] = useState((window.innerHeight / 250) + 1)
+    const [position, set_position] = useState<{ x: number; y: number }>({
+        x: 0,
+        y: 0
+      });
 
     const control_style = {
         color: 'blue',
@@ -16,6 +21,7 @@ export default function GridControl() {
         };
         window.addEventListener('resize', handle_resize);
         return () => window.removeEventListener('resize', handle_resize);
+        // TODO Why does it return an empty array?
     }, [])
 
     return (

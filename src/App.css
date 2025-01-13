@@ -48,10 +48,10 @@
   margin-top: -100vh;
 }
 
-.moving_dot {
+/* .moving_dot {
   z-index: 2;
   position: relative;
-}
+} */
 
 .parent_container {
   position: relative;
@@ -60,7 +60,6 @@
 .page_overlay {
   z-index: 1;
   position: relative;
-  margin-top: -100vh;
 }
 
 body {
