@@ -3,7 +3,7 @@
     /* If changing below make sure to update grid column/row sizes */
     width: 50px;
     height: 50px;
-    border: 3px solid greenyellow;
+    /* border: 3px solid greenyellow; */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -12,7 +12,7 @@
 
 .grid_container {
     background-color: rgba(0, 0, 0, 0);
-    border: 5px solid red;
+    /* border: 5px solid red; */
     display: grid;
     grid-template-columns: repeat(5, 50px);
     grid-template-rows: repeat(5, 50px);
@@ -21,7 +21,7 @@
 }
  .grid_control{
     background-color: rgba(0, 0, 0, 0);
-    border: 10px solid purple;
+    /* border: 10px solid purple; */
     display: grid;
     gap: 0;
     box-sizing: border-box;
