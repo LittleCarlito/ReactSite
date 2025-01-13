@@ -1,5 +1,6 @@
 import './App.css'
 import DefaultBase from './base/default_base'
+import GridControl from './overlay/grid/grid_control'
 import MovingDot from './overlay/pointer/moving_dot'
 
 function App() {
@@ -8,6 +9,9 @@ function App() {
       <div className='parent_container'>
         <div className='moving_dot'>
           <MovingDot />
+        </div>
+        <div className='page_overlay'>
+          <GridControl />
         </div>
         <div className='default_background'>
           <DefaultBase />

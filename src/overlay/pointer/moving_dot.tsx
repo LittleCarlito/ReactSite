@@ -7,24 +7,26 @@ export default function MovingDot() {
     y: 0
   });
   return (
-    <div className='background'
-      onPointerMove={e => {
-        setPosition({
-          x: e.clientX,
-          y: e.clientY
-        });
-      }}>
-      <div className='moving_dot'
-      style={{
-        position: 'absolute',
-        backgroundColor: 'red',
-        borderRadius: '50%',
-        transform: `translate(${position.x}px, ${position.y}px)`,
-        left: -10,
-        top: -10,
-        width: 20,
-        height: 20,
-      }}/>
-    </div>
+    <>
+      <div className='background'
+        onPointerMove={e => {
+          setPosition({
+            x: e.clientX,
+            y: e.clientY
+          });
+        }}>
+        <div className='moving_dot'
+        style={{
+          position: 'absolute',
+          backgroundColor: 'red',
+          borderRadius: '50%',
+          transform: `translate(${position.x}px, ${position.y}px)`,
+          left: -10,
+          top: -10,
+          width: 20,
+          height: 20,
+        }}/>
+      </div>
+    </>
   );
 }

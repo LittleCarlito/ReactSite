@@ -1,17 +1,13 @@
-function GridTile() {
-    const tile_width = 50
-    const tile_height = 50
+export default function GridTile() {
 
     return (
         <>
-            <div style={{position: 'relative', zIndex: 1, border: '1rem solid green'}}>
-
+            <div className="tile">
+              {/* TODO Add hovering logic to begin with */}
             </div>
         </>
     )
 }
-
-export default GridTile
 
 
 /*
