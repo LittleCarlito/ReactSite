@@ -1,11 +1,19 @@
+import { useState, useEffect } from "react";
+
 interface GridTIleProps {
   is_active?: boolean;
 }
 
 export default function GridTile({ is_active }: GridTIleProps) {
-  const valid_colors: Array<String> = ['red', 'green', 'yellow', 'blue', 'orange', 'purple', 'pink']
-  const rand_index = Math.floor(Math.random() * valid_colors.length)
-  const background_color = !is_active ? valid_colors[rand_index] : 'transparent'
+  const [background_color, set_background_color] = useState('transparent')
+
+  useEffect(() => {
+    const valid_colors: Array<string> = ['red', 'green', 'yellow', 'blue', 'orange', 'purple', 'pink']
+    const rand_index = Math.floor(Math.random() * valid_colors.length)
+    set_background_color(valid_colors[rand_index])
+  }, [is_active])
+
+
   return (
     <>
       <div className="tile" style = {{backgroundColor: `${background_color}`}}>
@@ -13,59 +21,3 @@ export default function GridTile({ is_active }: GridTIleProps) {
     </>
   )
 }
-
-
-/*
-Hover logic
-
-import { useState } from 'react';
-
-export default function App() {
-  const [isFancy, setIsFancy] = useState(false);
-  return (
-    <div>
-      {isFancy ? (
-        <Counter isFancy={true} /> 
-      ) : (
-        <Counter isFancy={false} /> 
-      )}
-      <label>
-        <input
-          type="checkbox"
-          checked={isFancy}
-          onChange={e => {
-            setIsFancy(e.target.checked)
-          }}
-        />
-        Use fancy styling
-      </label>
-    </div>
-  );
-}
-
-function Counter({ isFancy }) {
-  const [score, setScore] = useState(0);
-  const [hover, setHover] = useState(false);
-
-  let className = 'counter';
-  if (hover) {
-    className += ' hover';
-  }
-  if (isFancy) {
-    className += ' fancy';
-  }
-
-  return (
-    <div
-      className={className}
-      onPointerEnter={() => setHover(true)}
-      onPointerLeave={() => setHover(false)}
-    >
-      <h1>{score}</h1>
-      <button onClick={() => setScore(score + 1)}>
-        Add one
-      </button>
-    </div>
-  );
-}
-*/

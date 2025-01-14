@@ -1,9 +1,8 @@
 .tile {
     background-color: rgba(0, 0, 0, 0);
-    /* If changing below make sure to update grid column/row sizes */
+    /* border: 3px solid greenyellow; */
     width: --grid_tile_size;
     height: --grid_tile_size;
-    /* border: 3px solid greenyellow; */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -11,8 +10,8 @@
 }
 
 .grid_container {
-    background-color: rgba(0, 0, 0, 0);
     /* border: 5px solid red; */
+    background-color: rgba(0, 0, 0, 0);
     display: grid;
     grid-template-columns: repeat(var(--grid_column_container_count), var(--grid_tile_size));
     grid-template-rows: repeat(var(--grid_row_container_count), var(--grid_tile_size));
@@ -20,8 +19,8 @@
     box-sizing: border-box;
 }
  .grid_control{
-    background-color: rgba(0, 0, 0, 0);
     /* border: 10px solid purple; */
+    background-color: rgba(0, 0, 0, 0);
     display: grid;
     gap: 0;
     box-sizing: border-box;
