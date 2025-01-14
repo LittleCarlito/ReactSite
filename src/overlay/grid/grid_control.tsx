@@ -64,6 +64,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                     return(
                         <GridContainer 
                             key={col_index} 
+                            tile_size={tile_size_property}
                             column_count={column_count_property} 
                             row_count={row_count_property} 
                             {... additional_props}

@@ -18,6 +18,9 @@ export default function GridTile({ is_active }: GridTIleProps) {
       const rand_index = Math.floor(Math.random() * valid_colors.length);
       set_background_color(valid_colors[rand_index]);
     }
+    else {
+      set_background_color('transparent')
+    }
   }, [(is_active)]);
 
 
