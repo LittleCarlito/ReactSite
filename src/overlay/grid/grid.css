@@ -1,8 +1,8 @@
 .tile {
     background-color: rgba(0, 0, 0, 0);
     /* If changing below make sure to update grid column/row sizes */
-    width: 50px;
-    height: 50px;
+    width: --grid_tile_size;
+    height: --grid_tile_size;
     /* border: 3px solid greenyellow; */
     display: flex;
     align-items: center;
@@ -14,8 +14,8 @@
     background-color: rgba(0, 0, 0, 0);
     /* border: 5px solid red; */
     display: grid;
-    grid-template-columns: repeat(5, 50px);
-    grid-template-rows: repeat(5, 50px);
+    grid-template-columns: repeat(var(--grid_column_container_count), var(--grid_tile_size));
+    grid-template-rows: repeat(var(--grid_row_container_count), var(--grid_tile_size));
     gap: 0px;
     box-sizing: border-box;
 }

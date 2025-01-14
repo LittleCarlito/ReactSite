@@ -16,7 +16,8 @@ export default function DotOverlay() {
             <MovingDot x_position={position.x} y_position={position.y}/>
         </div>
         <div className='dot_grid'>
-            <GridControl />
+            {/*  TODO Need to pass in mouse x and y and have GridControl activate the proper panels */}
+            <GridControl x_position={position.x} y_position={position.y}/>
         </div>
     </div>
     )
