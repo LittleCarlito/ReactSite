@@ -41,27 +41,35 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
     // TODO Based off given x and y params calculate which GridContainer in the matrix contains the active tile
     useEffect(() => {
         // Determine active column
-        let active_column: number = Math.floor(x_position / container_width);
-        const column_remainder: number = x_position / container_width;
-        const column_adjust: number = column_remainder == 0 ? 0 : 1;
-        active_column =+ column_adjust;
+        let active_column: number = Math.trunc(x_position / container_width);
+        const column_remainder: number = x_position % container_width;
         // Determine active row
-        let active_row: number = Math.floor(y_position / container_height);
-        const row_remainder: number = y_position / container_height;
-        const row_adjust: number = row_remainder == 0 ? 0 : 1;
-        active_row =+ row_adjust
+        let active_row: number = Math.trunc(y_position / container_height);
+        const row_remainder: number = y_position % container_height;
         // Set active coordinates for rendering
         set_active_coordinates({ column: active_column, column_remainder: column_remainder, 
-            row: active_row, row_remainder: row_remainder })
+                                    row: active_row, row_remainder: row_remainder })
     }, [x_position, y_position])
 
+    // TODO Add in grid container to see if col_index and row_index match coordinates, if they do pass in x and y remainders
     return (
         <div className='grid_control'>
             {Array.from({ length: height_container_count}).map((_, row_index) => (
                 <div key={row_index} style={{ display: 'flex' }}>
-                    {Array.from({ length: width_container_count }).map((_, col_index) => (
-                        <GridContainer key={col_index} />
-                    ))}
+                    {Array.from({ length: width_container_count }).map((_, col_index) => {
+                        const additional_props =
+                            (row_index === active_coordinates.row && col_index === active_coordinates.column)
+                            ? {x_position: active_coordinates.column_remainder, y_position: active_coordinates.row_remainder}
+                            : {};
+                    return(
+                        <GridContainer 
+                            key={col_index} 
+                            column_count={column_count_property} 
+                            row_count={row_count_property} 
+                            {... additional_props}
+                        />
+                    );
+                    })}
                 </div>
             ))}
         </div>

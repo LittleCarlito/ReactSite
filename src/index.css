@@ -12,7 +12,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --grid_tile_size: 10px;
+  --grid_tile_size: 50px;
   --grid_column_container_count: 5;
   --grid_row_container_count: 5;
 }
