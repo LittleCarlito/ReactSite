@@ -5,7 +5,7 @@ interface GridTIleProps {
 export default function GridTile({ is_active }: GridTIleProps) {
   const valid_colors: Array<String> = ['red', 'green', 'yellow', 'blue', 'orange', 'purple', 'pink']
   const rand_index = Math.floor(Math.random() * valid_colors.length)
-  const background_color = is_active ? valid_colors[rand_index] : 'transparent'
+  const background_color = !is_active ? valid_colors[rand_index] : 'transparent'
   return (
     <>
       <div className="tile" style = {{backgroundColor: `${background_color}`}}>
