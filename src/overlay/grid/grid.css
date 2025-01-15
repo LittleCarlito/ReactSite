@@ -1,5 +1,5 @@
 .tile {
-    /* border: 3px solid greenyellow; */
+    border: 3px solid greenyellow;
     background-color: rgba(0, 0, 0, 0);
     width: --grid_tile_size;
     height: --grid_tile_size;
@@ -10,13 +10,16 @@
 }
 
 .grid_container {
-    /* border: 5px solid red; */
+    border: 5px solid red;
     background-color: rgba(0, 0, 0, 0);
     display: grid;
     grid-auto-flow: row;
     grid-template-columns: repeat(var(--grid_column_container_count), var(--grid_tile_size));
     grid-template-rows: repeat(var(--grid_row_container_count), var(--grid_tile_size));
     gap: 0px;
+    /* TODO Make this a calculation so it works with resizing the tiles */
+    width: 250px;
+    height: 250px;
     box-sizing: border-box;
 }
 
