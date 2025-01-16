@@ -145,7 +145,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 // upper_left_secondary.panel_row = row_count_property
             }
             // Bottom border adjustments
-            if(active_panel_row == row_count_property) {
+            if(active_panel_row == row_count_property - 1) {
                 lower_primary.container_row =+ 1;
                 lower_primary.tile_row = 0;
             }
@@ -155,7 +155,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 left_primary.tile_column = column_count_property;
             }
             // Right border adjustments
-            if(active_panel_column == column_count_property) {
+            if(active_panel_column == column_count_property - 1) {
                 left_primary.container_column =+ 1;
                 left_primary.tile_column = 0;
             }
@@ -191,6 +191,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 <div key={row_index} style={{ display: 'flex' }}>
                     {Array.from({ length: width_container_count }).map((_, col_index) => {
                         let additional_props = {}
+                        let current_data: ActiveData = {}
                         // TODO Need to add/update logic so that conatiners who appear in primary data have their additional props set as well
                         if (row_index === active_container_coordinate.container_row 
                             && col_index === active_container_coordinate.container_column){
@@ -198,21 +199,24 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                                 tile_column: active_container_coordinate.tile_column,
                                 tile_row: active_container_coordinate.tile_row
                             }
-                            // Get primary data for just this container
-                            const primary_container_subset: Array<TileContainerCoordinate> = primary_coordinates
-                            .filter(pc => pc.container_row == row_index && pc.container_column == col_index);
-                            const primary_tile_subset: Array<TileCoordinate> = primary_container_subset.map(tile => (
-                                {tile_column: tile.tile_column, tile_row: tile.tile_row}
-                            ));
-                            const current_data: ActiveData = {
+                            current_data = {
+                                ...current_data,
                                 active_tile: current_tile,
-                                primary_tiles: primary_tile_subset,
-                                secondary_tiles: [],
-                                tertiary_tiles: []
+                                primary_tiles: primary_coordinates
                             }
                             additional_props = {active_data: current_data}
                         // TODO Add elif checking if row_index, col_index are called out in any of the primary coordinates
-                        }
+                        } 
+                        // Get primary data for just this container
+                        const primary_container_subset: Array<TileContainerCoordinate> = primary_coordinates
+                        .filter(pc => pc.container_row == row_index && pc.container_column == col_index);
+                        const primary_tile_subset: Array<TileCoordinate> = primary_container_subset.map(tile => (
+                            {tile_column: tile.tile_column, tile_row: tile.tile_row}
+                        ));
+                        current_data = {
+                            ...current_data,
+                            primary_tiles: primary_tile_subset
+                        };
                     return(
                         <GridContainer 
                             key={col_index} 

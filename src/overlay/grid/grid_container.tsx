@@ -14,29 +14,33 @@ export default function GridContainer({active_data, column_count, row_count}: Gr
     const [primary_ids, set_primary_ids] = useState<Array<number>>([])
 
     useEffect(() => {
+        set_primary_ids([])
         // Check active data for active tile 
-        const x_position = active_data?.active_tile.tile_column;
-        const y_position = active_data?.active_tile.tile_row;
+        const x_position = active_data?.active_tile?.tile_column;
+        const y_position = active_data?.active_tile?.tile_row;
         if(x_position != null && y_position != null) {
             if(x_position != -1 && y_position != -1) {
-                const active_id: number = (y_position * column_count) + x_position
-                console.log(`Setting ${active_id} as active as a result of ${y_position} and ${x_position} coordinates`)
-                set_active_id(active_id);
+                const calculated_active_id: number = (y_position * column_count) + x_position
+                console.log(`Setting ${calculated_active_id} as active as a result of ${y_position} and ${x_position} coordinates`)
+                set_active_id(calculated_active_id);
             }
         } else {
             set_active_id(-1)
         }
         // TODO Check active data for primary tiles
-        if(active_data?.primary_tiles != null) {
+        if(active_data?.primary_tiles) {
             const container_primaries: Array<TileCoordinate> = active_data.primary_tiles;
-            container_primaries.map(tc => {
+            console.log(`I recieved ${container_primaries.length} primary tiles`)
+            const new_primary_ids = container_primaries.map(tc => {
                 const primary_id: number = (tc.tile_row * column_count) + tc.tile_column;
                 console.log(`Setting ${primary_id} as primary as a result of ${tc.tile_row} and ${tc.tile_column} coordinates`)
-                set_primary_ids([...primary_ids, primary_id])
+                return primary_id
             });
+            set_primary_ids(new_primary_ids)
         } else {
             set_primary_ids([])
         }
+        // TODO Not setting this properly is whats causing the current bugs
     }, [active_data])
 
     return (
@@ -44,8 +48,15 @@ export default function GridContainer({active_data, column_count, row_count}: Gr
             {Array.from({ length: column_count * row_count }).map((_, tile_index) => {
                 const is_active = tile_index == active_id;
                 const is_primary = primary_ids.includes(tile_index)
-                console.log(`is active ${is_active}; is primary: ${is_primary}`)
-                return(<GridTile key={tile_index} is_active={is_active} is_primary={is_primary}/>);
+                if(is_primary){
+                    console.log(`${tile_index} is primary`)
+                }
+                return(
+                    <GridTile 
+                        key={tile_index} 
+                        is_active={is_active} 
+                        is_primary={is_primary
+                    }/>);
             })}
         </div>
     )
