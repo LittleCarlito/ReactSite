@@ -19,7 +19,7 @@ export default function GridContainer({active_data, column_count, row_count}: Gr
         const x_position = active_data?.active_tile?.tile_column;
         const y_position = active_data?.active_tile?.tile_row;
         if(x_position != null && y_position != null) {
-            if(x_position != -1 && y_position != -1) {
+            if(x_position !== -1 && y_position !== -1) {
                 const calculated_active_id: number = (y_position * column_count) + x_position
                 console.log(`Setting ${calculated_active_id} as active as a result of ${y_position} and ${x_position} coordinates`)
                 set_active_id(calculated_active_id);
@@ -27,11 +27,12 @@ export default function GridContainer({active_data, column_count, row_count}: Gr
         } else {
             set_active_id(-1)
         }
-        // TODO Check active data for primary tiles
+        // Check active data for primary tiles
         if(active_data?.primary_tiles) {
             const container_primaries: Array<TileCoordinate> = active_data.primary_tiles;
-            console.log(`I recieved ${container_primaries.length} primary tiles`)
-            const new_primary_ids = container_primaries.map(tc => {
+            console.log(`I recieved ${container_primaries.length} primary tiles`);
+            const new_primary_ids = container_primaries
+            .map(tc => {
                 const primary_id: number = (tc.tile_row * column_count) + tc.tile_column;
                 console.log(`Setting ${primary_id} as primary as a result of ${tc.tile_row} and ${tc.tile_column} coordinates`)
                 return primary_id
@@ -40,7 +41,6 @@ export default function GridContainer({active_data, column_count, row_count}: Gr
         } else {
             set_primary_ids([])
         }
-        // TODO Not setting this properly is whats causing the current bugs
     }, [active_data])
 
     return (

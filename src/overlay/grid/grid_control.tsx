@@ -52,13 +52,13 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
         let active_container_row: number = Math.trunc(y_position / container_height);
         const active_panel_row = Math.trunc((y_position % container_height) / tile_size_property);
         // Create default primary Coordinate objects
-        let upper_primary: TileContainerCoordinate = {
+        let lower_primary: TileContainerCoordinate = {
             container_column: active_container_column,
             tile_column: active_panel_column,
             container_row: active_container_row,
             tile_row: active_panel_row + 1
         };
-        let lower_primary: TileContainerCoordinate = {
+        let upper_primary: TileContainerCoordinate = {
             container_column: active_container_column,
             tile_column: active_panel_column,
             container_row: active_container_row,
@@ -137,8 +137,8 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
             if(active_panel_row == 0) {
                 // Primary adjustments
                 upper_primary.container_row =- 1;
-                upper_primary.tile_row = row_count_property;
-                // // Secondary adjustments
+                upper_primary.tile_row = row_count_property - 1;
+                // Secondary adjustments
                 // upper_right_secondary.container_row =- 1
                 // upper_right_secondary.panel_row = row_count_property
                 // upper_left_secondary.container_row =- 1
@@ -152,18 +152,18 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
             // Left border adjustments
             if(active_panel_column == 0) {
                 left_primary.container_column =- 1;
-                left_primary.tile_column = column_count_property;
+                left_primary.tile_column = column_count_property - 1;
             }
             // Right border adjustments
             if(active_panel_column == column_count_property - 1) {
-                left_primary.container_column =+ 1;
-                left_primary.tile_column = 0;
+                right_primary.container_column =+ 1;
+                right_primary.tile_column = 0;
             }
         }
         if(is_border_one_away) {
             // TODO Handle secondary coordiante adjustments
         }
-        set_primary_coorindates([upper_primary, lower_primary, left_primary, right_primary]);
+        set_primary_coorindates([lower_primary, upper_primary, left_primary, right_primary]);
         // TODO Determine secondary tiles
         // TODO Create default secondary Coordinate objects
         //          Do this above where the other ones are created
