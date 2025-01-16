@@ -136,7 +136,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
             // Top border adjustments
             if(active_panel_row == 0) {
                 // Primary adjustments
-                upper_primary.container_row =- 1;
+                upper_primary.container_row -= 1;
                 upper_primary.tile_row = row_count_property - 1;
                 // Secondary adjustments
                 // upper_right_secondary.container_row =- 1
@@ -146,17 +146,17 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
             }
             // Bottom border adjustments
             if(active_panel_row == row_count_property - 1) {
-                lower_primary.container_row =+ 1;
+                lower_primary.container_row += 1;
                 lower_primary.tile_row = 0;
             }
             // Left border adjustments
             if(active_panel_column == 0) {
-                left_primary.container_column =- 1;
+                left_primary.container_column -= 1;
                 left_primary.tile_column = column_count_property - 1;
             }
             // Right border adjustments
             if(active_panel_column == column_count_property - 1) {
-                right_primary.container_column =+ 1;
+                right_primary.container_column += 1;
                 right_primary.tile_column = 0;
             }
         }
@@ -177,16 +177,27 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
         // TODO Set primary coordinates for rendering
         // TODO Set secondary coordinates for rendering
         // TODO Set tertiary coordinates for rendering
+
+        const debug_var: Array<[number, number]> = []
+        primary_coordinates.forEach(coord => {
+            const tuple: [number, number] = [coord.container_column, coord.container_row];
+            // Check if the tuple already exists in debug_var
+            const exists = debug_var.some(([col, row]) => col === tuple[0] && row === tuple[1]);
+            if (!exists) {
+                debug_var.push(tuple);
+            }
+        });
+        console.log("Updated debug_var count:", debug_var.length);
+
     }, [x_position, y_position]);
     // Debug logging
-    console.log(`Active tile: ${active_container_coordinate.tile_column}, ${active_container_coordinate.tile_row}`);
-    primary_coordinates.map(pc => (
-        console.log(`Primary coordinates: ${pc.tile_column}, ${pc.tile_row}`)    
-    ));
+    // console.log(`Active tile: ${active_container_coordinate.tile_column}, ${active_container_coordinate.tile_row}`);
+    // primary_coordinates.map(pc => (
+    //     console.log(`Primary coordinates: ${pc.tile_column}, ${pc.tile_row}`)    
+    // ));
     // TODO Add in grid container to see if col_index and row_index match coordinates, if they do pass in x and y remainders
     return (
         <div className='grid_control'>
-            {/* <div>Active tile: {Math.trunc((x_position % container_width) / tile_size_property)}, {Math.trunc((y_position % container_height) / tile_size_property)}</div> */}
             {Array.from({ length: height_container_count}).map((_, row_index) => (
                 <div key={row_index} style={{ display: 'flex' }}>
                     {Array.from({ length: width_container_count }).map((_, col_index) => {
@@ -201,22 +212,22 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                             }
                             current_data = {
                                 ...current_data,
-                                active_tile: current_tile,
-                                primary_tiles: primary_coordinates
+                                active_tile: current_tile
                             }
-                            additional_props = {active_data: current_data}
-                        // TODO Add elif checking if row_index, col_index are called out in any of the primary coordinates
                         } 
+                        // TODO Consider changing this to map so this is less intensive
                         // Get primary data for just this container
                         const primary_container_subset: Array<TileContainerCoordinate> = primary_coordinates
                         .filter(pc => pc.container_row == row_index && pc.container_column == col_index);
                         const primary_tile_subset: Array<TileCoordinate> = primary_container_subset.map(tile => (
                             {tile_column: tile.tile_column, tile_row: tile.tile_row}
                         ));
+                        console.log('primary subset has this many items: ' + primary_tile_subset.length)
                         current_data = {
                             ...current_data,
                             primary_tiles: primary_tile_subset
                         };
+                        additional_props = {active_data: current_data}
                     return(
                         <GridContainer 
                             key={col_index} 

@@ -21,7 +21,7 @@ export default function GridContainer({active_data, column_count, row_count}: Gr
         if(x_position != null && y_position != null) {
             if(x_position !== -1 && y_position !== -1) {
                 const calculated_active_id: number = (y_position * column_count) + x_position
-                console.log(`Setting ${calculated_active_id} as active as a result of ${y_position} and ${x_position} coordinates`)
+                // console.log(`Setting ${calculated_active_id} as active as a result of ${y_position} and ${x_position} coordinates`)
                 set_active_id(calculated_active_id);
             }
         } else {
@@ -30,11 +30,10 @@ export default function GridContainer({active_data, column_count, row_count}: Gr
         // Check active data for primary tiles
         if(active_data?.primary_tiles) {
             const container_primaries: Array<TileCoordinate> = active_data.primary_tiles;
-            console.log(`I recieved ${container_primaries.length} primary tiles`);
             const new_primary_ids = container_primaries
             .map(tc => {
                 const primary_id: number = (tc.tile_row * column_count) + tc.tile_column;
-                console.log(`Setting ${primary_id} as primary as a result of ${tc.tile_row} and ${tc.tile_column} coordinates`)
+                // console.log(`Setting ${primary_id} as primary as a result of ${tc.tile_row} and ${tc.tile_column} coordinates`)
                 return primary_id
             });
             set_primary_ids(new_primary_ids)
@@ -48,15 +47,12 @@ export default function GridContainer({active_data, column_count, row_count}: Gr
             {Array.from({ length: column_count * row_count }).map((_, tile_index) => {
                 const is_active = tile_index == active_id;
                 const is_primary = primary_ids.includes(tile_index)
-                if(is_primary){
-                    console.log(`${tile_index} is primary`)
-                }
                 return(
                     <GridTile 
                         key={tile_index} 
                         is_active={is_active} 
-                        is_primary={is_primary
-                    }/>);
+                        is_primary={is_primary}
+                    />);
             })}
         </div>
     )
