@@ -19,15 +19,14 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
     const container_height: number = tile_size_property * row_count_property
     const [width_container_count, set_width_count] = useState((window.innerWidth / container_width) + 1)
     const [height_container_count, set_height_count] = useState((window.innerHeight / container_height) + 1)
-    // Activated variables
-    const [active_container_coordinate, set_active_container_coordinates] = useState<TileContainerCoordinate>({
+    // Activated coordinates
+    const [active_container_coordinate, set_active_coordinates] = useState<TileContainerCoordinate>({
         container_column: -1,
         tile_column: -1,
         container_row: -1,
         tile_row: -1
     });
-    // TODO OOOOO
-    // TODO Get primary coordinates rendering before moving to manipulating secondary
+    // Primary, secondary, and tertiary activated coordinates
     const [primary_coordinates, set_primary_coorindates] = useState<TileContainerCoordinate[]>([])
     const [secondary_coordinates, set_secondary_coorindates] = useState<TileContainerCoordinate[]>([])
     const [tertiary_coordinates, set_tertiary_coorindates] = useState<TileContainerCoordinate[]>([])
@@ -77,13 +76,13 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
             tile_row: active_panel_row
         };
         // Create default secondary Coordinate objects
-        let upper_secondary: TileContainerCoordinate = {
+        let lower_secondary: TileContainerCoordinate = {
             container_column: active_container_column,
             tile_column: active_panel_column,
             container_row: active_container_row,
             tile_row: active_panel_row + 2
         }
-        let lower_secondary: TileContainerCoordinate = {
+        let upper_secondary: TileContainerCoordinate = {
             container_column: active_container_column,
             tile_column: active_panel_column,
             container_row: active_container_row,
@@ -101,36 +100,36 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
             container_row: active_container_row,
             tile_row: active_panel_row
         }
-        let upper_right_secondary: TileContainerCoordinate = {
-            container_column: active_container_column,
-            tile_column: active_panel_column + 1,
-            container_row: active_container_row,
-            tile_row: active_panel_row + 1
-        }
-        let upper_left_secondary: TileContainerCoordinate = {
-            container_column: active_container_column,
-            tile_column: active_panel_column - 1,
-            container_row: active_container_row,
-            tile_row: active_panel_row + 1
-        }
         let lower_right_secondary: TileContainerCoordinate = {
             container_column: active_container_column,
             tile_column: active_panel_column + 1,
             container_row: active_container_row,
-            tile_row: active_panel_row - 1 
+            tile_row: active_panel_row + 1 
         }
         let lower_left_secondary: TileContainerCoordinate = {
             container_column: active_container_column,
             tile_column: active_panel_column - 1,
             container_row: active_container_row,
-            tile_row: active_panel_row - 1 
+            tile_row: active_panel_row + 1 
         }
+        let upper_right_secondary: TileContainerCoordinate = {
+            container_column: active_container_column,
+            tile_column: active_panel_column + 1,
+            container_row: active_container_row,
+            tile_row: active_panel_row - 1
+        }
+        let upper_left_secondary: TileContainerCoordinate = {
+            container_column: active_container_column,
+            tile_column: active_panel_column - 1,
+            container_row: active_container_row,
+            tile_row: active_panel_row - 1
+        }
+
         // Check if active column or row is on border of container
         const is_tile_direct_border = (active_panel_row == 0 || active_panel_row == (row_count_property - 1)) 
                                 || (active_panel_column == 0 || active_panel_column == (column_count_property - 1));
         const is_border_one_away = ((active_panel_row == 1 || active_panel_row == (row_count_property - 2)) 
                                 || (active_panel_column == 1 || active_panel_column == (column_count_property - 2)))
-        // TODO Add adjusting for secondary Coordinates to here
         // Adjust primary coordinates if on border
         if(is_tile_direct_border) {
             // Top border adjustments
@@ -139,63 +138,98 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 upper_primary.container_row -= 1;
                 upper_primary.tile_row = row_count_property - 1;
                 // Secondary adjustments
-                // upper_right_secondary.container_row =- 1
-                // upper_right_secondary.panel_row = row_count_property
-                // upper_left_secondary.container_row =- 1
-                // upper_left_secondary.panel_row = row_count_property
+                upper_left_secondary.container_row -= 1;
+                upper_left_secondary.tile_row = row_count_property - 1;
+                upper_right_secondary.container_row -= 1;
+                upper_right_secondary.tile_row = row_count_property - 1;
+                upper_secondary.container_row -= 1;
+                upper_secondary.tile_row = row_count_property - 2;
             }
             // Bottom border adjustments
             if(active_panel_row == row_count_property - 1) {
                 lower_primary.container_row += 1;
                 lower_primary.tile_row = 0;
+                // Secondary adjustments
+                lower_left_secondary.container_row += 1;
+                lower_left_secondary.tile_row = 0;
+                lower_right_secondary.container_row += 1;
+                lower_right_secondary.tile_row = 0;
+                lower_secondary.container_row += 1;
+                lower_secondary.tile_row = 1;
             }
             // Left border adjustments
             if(active_panel_column == 0) {
                 left_primary.container_column -= 1;
                 left_primary.tile_column = column_count_property - 1;
+                // Secondary adjustments
+                upper_left_secondary.container_column -= 1;
+                upper_left_secondary.tile_column = column_count_property - 1;
+                lower_left_secondary.container_column -= 1;
+                lower_left_secondary.tile_column = column_count_property - 1;
+                left_secondary.container_column -= 1;
+                left_secondary.tile_column = column_count_property - 2;
             }
             // Right border adjustments
             if(active_panel_column == column_count_property - 1) {
                 right_primary.container_column += 1;
                 right_primary.tile_column = 0;
+                // Secondary adjustments
+                upper_right_secondary.container_column += 1;
+                upper_right_secondary.tile_column = 0;
+                lower_right_secondary.container_column += 1;
+                lower_right_secondary.tile_column = 0;
+                right_secondary.container_column += 1;
+                right_secondary.tile_column = 1;
             }
         }
         if(is_border_one_away) {
-            // TODO Handle secondary coordiante adjustments
+            // Top border adjustments
+            if(active_panel_row == 1) {
+                // Handle secondary coordiante adjustments
+                upper_secondary.container_row -= 1;
+                upper_secondary.tile_row = row_count_property - 1;
+            }
+            // Bottom border adjustments
+            if(active_panel_row == row_count_property - 2) {
+                // Handle secondary coordiante adjustments
+                lower_secondary.container_row += 1;
+                lower_secondary.tile_row = 0;
+            }
+            // Left border adjustments
+            if(active_panel_column == 1) {
+                // Handle secondary coordiante adjustments
+                left_secondary.container_column -= 1;
+                left_secondary.tile_column = column_count_property - 1;
+            }
+            // Right border adjustments
+            if(active_panel_column == column_count_property - 2) {
+                // Handle secondary coordiante adjustments
+                right_secondary.container_column += 1;
+                right_secondary.tile_column = 0;
+            }
         }
-        set_primary_coorindates([lower_primary, upper_primary, left_primary, right_primary]);
-        // TODO Determine secondary tiles
-        // TODO Create default secondary Coordinate objects
-        //          Do this above where the other ones are created
-        // TODO Check if active column or row is on border of container
-        //          Do this above where the other border thing is checked
-        //          This should then be an elif statement off the is_panel_direct_border conditional
         // TODO Determine tertiary tiles
-        // Set active coordinates for rendering
-        set_active_container_coordinates({ container_column: active_container_column, tile_column: active_panel_column, 
+
+        // Set coordinates for rendering
+        set_active_coordinates({ container_column: active_container_column, tile_column: active_panel_column, 
             container_row: active_container_row, tile_row: active_panel_row });
-        // TODO Set primary coordinates for rendering
-        // TODO Set secondary coordinates for rendering
+        set_primary_coorindates([lower_primary, upper_primary, left_primary, right_primary]);
+        // Set secondary coordinates for rendering
+        set_secondary_coorindates([lower_secondary, upper_secondary, left_secondary, right_secondary, upper_left_secondary, upper_right_secondary, lower_left_secondary, lower_right_secondary]);
         // TODO Set tertiary coordinates for rendering
 
-        const debug_var: Array<[number, number]> = []
+        const activation_count: Array<[number, number]> = []
         primary_coordinates.forEach(coord => {
             const tuple: [number, number] = [coord.container_column, coord.container_row];
             // Check if the tuple already exists in debug_var
-            const exists = debug_var.some(([col, row]) => col === tuple[0] && row === tuple[1]);
+            const exists = activation_count.some(([col, row]) => col === tuple[0] && row === tuple[1]);
             if (!exists) {
-                debug_var.push(tuple);
+                activation_count.push(tuple);
             }
         });
-        console.log("Updated debug_var count:", debug_var.length);
+        console.log("Number of containers activated:", activation_count.length);
 
     }, [x_position, y_position]);
-    // Debug logging
-    // console.log(`Active tile: ${active_container_coordinate.tile_column}, ${active_container_coordinate.tile_row}`);
-    // primary_coordinates.map(pc => (
-    //     console.log(`Primary coordinates: ${pc.tile_column}, ${pc.tile_row}`)    
-    // ));
-    // TODO Add in grid container to see if col_index and row_index match coordinates, if they do pass in x and y remainders
     return (
         <div className='grid_control'>
             {Array.from({ length: height_container_count}).map((_, row_index) => (
@@ -203,7 +237,6 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                     {Array.from({ length: width_container_count }).map((_, col_index) => {
                         let additional_props = {}
                         let current_data: ActiveData = {}
-                        // TODO Need to add/update logic so that conatiners who appear in primary data have their additional props set as well
                         if (row_index === active_container_coordinate.container_row 
                             && col_index === active_container_coordinate.container_column){
                             const current_tile: TileCoordinate = {
@@ -222,10 +255,16 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                         const primary_tile_subset: Array<TileCoordinate> = primary_container_subset.map(tile => (
                             {tile_column: tile.tile_column, tile_row: tile.tile_row}
                         ));
-                        console.log('primary subset has this many items: ' + primary_tile_subset.length)
+                        // Get secondary data for just this condatiner
+                        const secondary_container_subset: Array<TileContainerCoordinate> = secondary_coordinates
+                        .filter(sc => sc.container_row == row_index && sc.container_column == col_index);
+                        const secondary_tile_subset: Array<TileCoordinate> = secondary_container_subset.map(tile =>(
+                            {tile_column: tile.tile_column, tile_row: tile.tile_row}
+                        ));
                         current_data = {
                             ...current_data,
-                            primary_tiles: primary_tile_subset
+                            primary_tiles: primary_tile_subset,
+                            secondary_tiles: secondary_tile_subset
                         };
                         additional_props = {active_data: current_data}
                     return(
