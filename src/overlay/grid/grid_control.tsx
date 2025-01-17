@@ -8,6 +8,13 @@ type GridControlProps = {
     y_position: number;
 }
 
+enum TYPE  {
+    ACTIVE,
+    PRIAMRY,
+    SECONDARY,
+    TERTIARY
+}
+
 export default function GridControl( {x_position, y_position}: GridControlProps ) {
     // Get the value of a CSS variables
     const root = document.documentElement;
@@ -27,9 +34,9 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
         tile_row: -1
     });
     // Primary, secondary, and tertiary activated coordinates
-    const [primary_coordinates, set_primary_coorindates] = useState<TileContainerCoordinate[]>([])
-    const [secondary_coordinates, set_secondary_coorindates] = useState<TileContainerCoordinate[]>([])
-    const [tertiary_coordinates, set_tertiary_coorindates] = useState<TileContainerCoordinate[]>([])
+    const [primary_coordinates, set_primary_coorindates] = useState<Map<[number, number], TileCoordinate[]>>(new Map<[number, number], TileCoordinate[]>())
+    const [secondary_coordinates, set_secondary_coorindates] = useState<Map<[number, number], TileCoordinate[]>>(new Map<[number, number], TileCoordinate[]>())
+    const [tertiary_coordinates, set_tertiary_coorindates] = useState<Map<[number, number], TileCoordinate[]>>(new Map<[number, number], TileCoordinate[]>())
 
     useEffect(() => {
         const handle_resize = () => {
@@ -42,6 +49,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
 
     // Based off given x and y params calculate which GridContainer in the matrix contains the active tile
     useEffect(() => {
+        // TODO Get this to a data object
         // Determine active column/row
         let active_container_column: number = Math.trunc(x_position / container_width);
         const active_panel_column = Math.trunc((x_position % container_width) / tile_size_property);
@@ -381,6 +389,21 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 right_tertiary.tile_column = 0;
             }
         }
+
+        const update_coordinate = (incoming_type: TYPE, incoming_data: TileContainerCoordinate[]) => {
+            switch(incoming_type) {
+                case TYPE.ACTIVE:
+                    break;
+                case TYPE.PRIAMRY:
+                    break;
+                case TYPE.SECONDARY:
+                    break;
+                case TYPE.TERTIARY:
+                    break;
+                default:
+            }
+        }
+
         // Set coordinates for rendering
         set_active_coordinates({ container_column: active_container_column, tile_column: active_panel_column, 
             container_row: active_container_row, tile_row: active_panel_row });
@@ -461,8 +484,6 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                     })}
                 </div>
             ))}
-            {/* TODO OOOOO */}
-            {/* TODO Attempt to refactor GridDiamond into a component and have it here */}
         </div>
     );
 }
