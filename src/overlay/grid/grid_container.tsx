@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import GridTile from './grid_tile'
-import { ActiveData } from '../../types/active_data';
+import { ActiveData } from '../../types';
+import { calculate_id } from '../../utils';
 
 type GridContainerProps = {
     active_data?: ActiveData;
@@ -20,7 +21,7 @@ export default function GridContainer({active_data, column_count, row_count}: Gr
         const y_position = active_data?.active_tile?.tile_row;
         if(x_position != null && y_position != null) {
             if(x_position !== -1 && y_position !== -1) {
-                const calculated_active_id: number = (y_position * column_count) + x_position
+                const calculated_active_id: number = calculate_id(y_position, x_position, column_count);
                 // console.log(`Setting ${calculated_active_id} as active as a result of ${y_position} and ${x_position} coordinates`)
                 set_active_id(calculated_active_id);
             }
@@ -32,7 +33,7 @@ export default function GridContainer({active_data, column_count, row_count}: Gr
         if(active_data?.primary_tiles) {
             const new_primary_ids: Array<number> = active_data.primary_tiles
             .map(tc => {
-                const primary_id: number = (tc.tile_row * column_count) + tc.tile_column;
+                const primary_id: number = calculate_id(tc.tile_row, tc.tile_column, column_count);
                 // console.log(`Setting ${primary_id} as primary as a result of ${tc.tile_row} and ${tc.tile_column} coordinates`)
                 return primary_id;
             });
@@ -45,7 +46,7 @@ export default function GridContainer({active_data, column_count, row_count}: Gr
         if(active_data?.secondary_tiles) {
             const new_secondary_ids: Array<number> = active_data.secondary_tiles
             .map(tc => {
-                const secondary_id: number = (tc.tile_row * column_count) + tc.tile_column;
+                const secondary_id: number = calculate_id(tc.tile_row, tc.tile_column, column_count);
                 // console.log(`Setting ${secondary_id} as secondary as a result of ${tc.tile_row} and ${tc.tile_column} coordinates`)
                 return secondary_id;
             });
@@ -57,7 +58,7 @@ export default function GridContainer({active_data, column_count, row_count}: Gr
         if(active_data?.tertiary_tiles) {
             const new_tertiary_ids: Array<number> = active_data.tertiary_tiles
             .map(tc => {
-                const tertiary_id: number = (tc.tile_row * column_count) + tc.tile_column;
+                const tertiary_id: number = calculate_id(tc.tile_row, tc.tile_column, column_count);
                 // console.log(`Setting ${tertiary_id} as secondary as a result of ${tc.tile_row} and ${tc.tile_column} coordinates`)
                 return tertiary_id;
             });
