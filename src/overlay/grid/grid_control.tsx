@@ -34,7 +34,6 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
         container_row: -1,
         tile_row: -1
     });
-    // TODO Convert these to TileCoordinates instead of TileContainerCoordinates
     // Primary, secondary, and tertiary activated coordinates
     const [primary_coordinates, set_primary_coorindates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
     const [secondary_coordinates, set_secondary_coorindates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
@@ -444,15 +443,6 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
         update_coordinate(TYPE.TERTIARY, [upper_right_tertiary, upper_left_tertiary, right_upper_tertiary, left_upper_tertiary,
             lower_right_tertiary, lower_left_tertiary, right_lower_tertiary, left_lower_tertiary,
             upper_tertiary, lower_tertiary, left_tertiary, right_tertiary]);
-        // Debug log for containers activated
-        let activation_count: number = 0;
-        const processCoordinates = (coordinates: Map<string, TileCoordinate[]>) => {
-            activation_count += coordinates.size;
-        };
-        processCoordinates(primary_coordinates);
-        processCoordinates(secondary_coordinates);
-        processCoordinates(tertiary_coordinates);
-        console.log("Number of containers activated:", activation_count);
     }, [x_position, y_position]);
     return (
         <div className='grid_control'>

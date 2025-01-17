@@ -59,7 +59,7 @@ export default function GridContainer({active_data, column_count, row_count}: Gr
             const new_tertiary_ids: Array<number> = active_data.tertiary_tiles
             .map(tc => {
                 const tertiary_id: number = calculate_id(tc.tile_row, tc.tile_column, column_count);
-                // console.log(`Setting ${tertiary_id} as secondary as a result of ${tc.tile_row} and ${tc.tile_column} coordinates`)
+                // console.log(`Setting ${tertiary_id} as tertiary as a result of ${tc.tile_row} and ${tc.tile_column} coordinates`)
                 return tertiary_id;
             });
             set_tertiary_ids(new_tertiary_ids);
