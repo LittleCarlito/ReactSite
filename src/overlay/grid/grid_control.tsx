@@ -40,9 +40,6 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
         return () => window.removeEventListener('resize', handle_resize);
     }, [])
 
-
-
-
     // Based off given x and y params calculate which GridContainer in the matrix contains the active tile
     useEffect(() => {
         // Determine active column/row
@@ -124,12 +121,90 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
             container_row: active_container_row,
             tile_row: active_panel_row - 1
         }
+        // Create default tertiary Coordinate objects
+        let upper_tertiary: TileContainerCoordinate = {
+            container_column: active_container_column,
+            tile_column: active_panel_column,
+            container_row: active_container_row,
+            tile_row: active_panel_row - 3
+        }
+        let lower_tertiary: TileContainerCoordinate = {
+            container_column: active_container_column,
+            tile_column: active_panel_column,
+            container_row: active_container_row,
+            tile_row: active_panel_row + 3
+        }
+        let right_tertiary: TileContainerCoordinate = {
+            container_column: active_container_column,
+            tile_column: active_panel_column + 3,
+            container_row: active_container_row,
+            tile_row: active_panel_row
+        }
+        let left_tertiary: TileContainerCoordinate = {
+            container_column: active_container_column,
+            tile_column: active_panel_column - 3,
+            container_row: active_container_row,
+            tile_row: active_panel_row
+        }
+        let upper_right_tertiary: TileContainerCoordinate = {
+            container_column: active_container_column,
+            tile_column: active_panel_column + 1,
+            container_row: active_container_row,
+            tile_row: active_panel_row - 2
+        }
+        let upper_left_tertiary: TileContainerCoordinate = {
+            container_column: active_container_column,
+            tile_column: active_panel_column - 1,
+            container_row: active_container_row,
+            tile_row: active_panel_row - 2
+        }
+        let left_upper_tertiary: TileContainerCoordinate = {
+            container_column: active_container_column,
+            tile_column: active_panel_column - 2,
+            container_row: active_container_row,
+            tile_row: active_panel_row - 1
+        }
+        let right_upper_tertiary: TileContainerCoordinate = {
+            container_column: active_container_column,
+            tile_column: active_panel_column + 2,
+            container_row: active_container_row,
+            tile_row: active_panel_row - 1
+        }
+        let right_lower_tertiary: TileContainerCoordinate = {
+            container_column: active_container_column,
+            tile_column: active_panel_column + 2,
+            container_row: active_container_row,
+            tile_row: active_panel_row + 1
+        }
+        let left_lower_tertiary: TileContainerCoordinate = {
+            container_column: active_container_column,
+            tile_column: active_panel_column - 2,
+            container_row: active_container_row,
+            tile_row: active_panel_row + 1
+        }
+        let lower_right_tertiary: TileContainerCoordinate = {
+            container_column: active_container_column,
+            tile_column: active_panel_column + 1,
+            container_row: active_container_row,
+            tile_row: active_panel_row + 2
+        }
+        let lower_left_tertiary: TileContainerCoordinate = {
+            container_column: active_container_column,
+            tile_column: active_panel_column - 1,
+            container_row: active_container_row,
+            tile_row: active_panel_row + 2
+        }
 
         // Check if active column or row is on border of container
         const is_tile_direct_border = (active_panel_row == 0 || active_panel_row == (row_count_property - 1)) 
                                 || (active_panel_column == 0 || active_panel_column == (column_count_property - 1));
+
         const is_border_one_away = ((active_panel_row == 1 || active_panel_row == (row_count_property - 2)) 
                                 || (active_panel_column == 1 || active_panel_column == (column_count_property - 2)))
+
+        const is_border_two_away = ((active_panel_row == 2 || active_panel_row == (row_count_property - 3)) 
+                                || (active_panel_column == 2 || active_panel_column == (column_count_property - 3)))
+
         // Adjust primary coordinates if on border
         if(is_tile_direct_border) {
             // Top border adjustments
@@ -144,6 +219,17 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 upper_right_secondary.tile_row = row_count_property - 1;
                 upper_secondary.container_row -= 1;
                 upper_secondary.tile_row = row_count_property - 2;
+                // TODO Tertiary adjustments
+                left_upper_tertiary.container_row -= 1;
+                left_upper_tertiary.tile_row = row_count_property - 1;
+                right_upper_tertiary.container_row -= 1;
+                right_upper_tertiary.tile_row = row_count_property - 1;
+                upper_left_tertiary.container_row -= 1;
+                upper_left_tertiary.tile_row = row_count_property - 2;
+                upper_right_tertiary.container_row -= 1;
+                upper_right_tertiary.tile_row = row_count_property - 2;
+                upper_tertiary.container_row -= 1;
+                upper_tertiary.tile_row = row_count_property - 3;
             }
             // Bottom border adjustments
             if(active_panel_row == row_count_property - 1) {
@@ -156,6 +242,17 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 lower_right_secondary.tile_row = 0;
                 lower_secondary.container_row += 1;
                 lower_secondary.tile_row = 1;
+                // TODO Tertiary adjustments
+                left_lower_tertiary.container_row += 1;
+                left_lower_tertiary.tile_row = 0;
+                right_lower_tertiary.container_row += 1;
+                right_lower_tertiary.tile_row = 0;
+                lower_left_tertiary.container_row += 1;
+                lower_left_tertiary.tile_row = 1;
+                lower_right_tertiary.container_row += 1;
+                lower_right_tertiary.tile_row = 1;
+                lower_tertiary.container_row += 1;
+                lower_tertiary.tile_row = 2;
             }
             // Left border adjustments
             if(active_panel_column == 0) {
@@ -168,6 +265,17 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 lower_left_secondary.tile_column = column_count_property - 1;
                 left_secondary.container_column -= 1;
                 left_secondary.tile_column = column_count_property - 2;
+                // TODO Tertiary adjustments
+                lower_left_tertiary.container_column -= 1;
+                lower_left_tertiary.tile_column = column_count_property - 1;
+                upper_left_tertiary.container_column -= 1;
+                upper_left_tertiary.tile_column = column_count_property - 1;
+                left_upper_tertiary.container_column -= 1;
+                left_upper_tertiary.tile_column = column_count_property - 2;
+                left_lower_tertiary.container_column -= 1;
+                left_lower_tertiary.tile_column = column_count_property - 2;
+                left_tertiary.container_column -= 1;
+                left_tertiary.tile_column = column_count_property - 3;
             }
             // Right border adjustments
             if(active_panel_column == column_count_property - 1) {
@@ -180,34 +288,101 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 lower_right_secondary.tile_column = 0;
                 right_secondary.container_column += 1;
                 right_secondary.tile_column = 1;
+                // TODO Tertiary adjustments
+                lower_right_tertiary.container_column += 1;
+                lower_right_tertiary.tile_column = 0;
+                upper_right_tertiary.container_column += 1;
+                upper_right_tertiary.tile_column = 0;
+                right_upper_tertiary.container_column += 1;
+                right_upper_tertiary.tile_column = 1;
+                right_lower_tertiary.container_column += 1;
+                right_lower_tertiary.tile_column = 1;
+                right_tertiary.container_column += 1;
+                right_tertiary.tile_column = 2;
             }
         }
         if(is_border_one_away) {
             // Top border adjustments
             if(active_panel_row == 1) {
-                // Handle secondary coordiante adjustments
+                // Secondary adjustments
                 upper_secondary.container_row -= 1;
                 upper_secondary.tile_row = row_count_property - 1;
+                // TODO Tertiary adjustments
+                upper_left_tertiary.container_row -= 1;
+                upper_left_tertiary.tile_row = row_count_property - 1;
+                upper_right_tertiary.container_row -= 1;
+                upper_right_tertiary.tile_row = row_count_property - 1;
+                upper_tertiary.container_row -= 1;
+                upper_tertiary.tile_row = row_count_property - 2;
             }
             // Bottom border adjustments
             if(active_panel_row == row_count_property - 2) {
-                // Handle secondary coordiante adjustments
+                // Secondary adjustments
                 lower_secondary.container_row += 1;
                 lower_secondary.tile_row = 0;
+                // TODO Tertiary adjustments
+                lower_left_tertiary.container_row += 1;
+                lower_left_tertiary.tile_row = 0;
+                lower_right_tertiary.container_row += 1;
+                lower_right_tertiary.tile_row = 0;
+                lower_tertiary.container_row += 1;
+                lower_tertiary.tile_row = 1;
             }
             // Left border adjustments
             if(active_panel_column == 1) {
-                // Handle secondary coordiante adjustments
+                // Secondary adjustments
                 left_secondary.container_column -= 1;
                 left_secondary.tile_column = column_count_property - 1;
+                // TODO Tertiary adjustments
+                left_upper_tertiary.container_column -= 1;
+                left_upper_tertiary.tile_column = column_count_property - 1;
+                left_lower_tertiary.container_column -= 1;
+                left_lower_tertiary.tile_column = column_count_property - 1;
+                left_tertiary.container_column -= 1;
+                left_tertiary.tile_column = column_count_property - 2;
             }
             // Right border adjustments
             if(active_panel_column == column_count_property - 2) {
-                // Handle secondary coordiante adjustments
+                // Secondary adjustments
                 right_secondary.container_column += 1;
                 right_secondary.tile_column = 0;
+                // TODO Tertiary adjustments
+                right_upper_tertiary.container_column += 1;
+                right_upper_tertiary.tile_column = 0;
+                right_lower_tertiary.container_column += 1;
+                right_lower_tertiary.tile_column = 0;
+                right_tertiary.container_column += 1;
+                right_tertiary.tile_column = 1;
             }
         }
+        if(is_border_two_away) {
+            // Top border adjustments
+            if(active_panel_row == 2) {
+                // Tertiary adjustments
+                upper_tertiary.container_row -= 1;
+                upper_tertiary.tile_row = row_count_property - 1;
+            }
+            // Bottom border adjustments
+            if(active_panel_row == row_count_property - 3) {
+                // Tertiary adjustments
+                lower_tertiary.container_row += 1;
+                lower_tertiary.tile_row = 0;
+            }
+            // Left border adjustments
+            if(active_panel_column == 2) {
+                // Tertiary adjustments
+                left_tertiary.container_column -= 1;
+                left_tertiary.tile_column = column_count_property - 1;
+            }
+            // Right border adjustments
+            if(active_panel_column == column_count_property - 3) {
+                // Tertiary adjustments
+                right_tertiary.container_column += 1;
+                right_tertiary.tile_column = 0;
+            }
+        }
+
+        // TODO OOOOO
         // TODO Determine tertiary tiles
 
         // Set coordinates for rendering
@@ -215,20 +390,27 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
             container_row: active_container_row, tile_row: active_panel_row });
         set_primary_coorindates([lower_primary, upper_primary, left_primary, right_primary]);
         // Set secondary coordinates for rendering
-        set_secondary_coorindates([lower_secondary, upper_secondary, left_secondary, right_secondary, upper_left_secondary, upper_right_secondary, lower_left_secondary, lower_right_secondary]);
+        set_secondary_coorindates([lower_secondary, upper_secondary, left_secondary, right_secondary, 
+            upper_left_secondary, upper_right_secondary, lower_left_secondary, lower_right_secondary]);
         // TODO Set tertiary coordinates for rendering
-
-        const activation_count: Array<[number, number]> = []
-        primary_coordinates.forEach(coord => {
-            const tuple: [number, number] = [coord.container_column, coord.container_row];
-            // Check if the tuple already exists in debug_var
-            const exists = activation_count.some(([col, row]) => col === tuple[0] && row === tuple[1]);
-            if (!exists) {
-                activation_count.push(tuple);
-            }
-        });
+        set_tertiary_coorindates([upper_right_tertiary, upper_left_tertiary, right_upper_tertiary, left_upper_tertiary,
+            lower_right_tertiary, lower_left_tertiary, right_lower_tertiary, left_lower_tertiary,
+            upper_tertiary, lower_tertiary, left_tertiary, right_tertiary]);
+        // Debug log for containers activated
+        const activation_count: Array<[number, number]> = [];
+        const processCoordinates = (coordinates: Array<{ container_column: number; container_row: number }>) => {
+            coordinates.forEach(coord => {
+                const tuple: [number, number] = [coord.container_column, coord.container_row];
+                const exists = activation_count.some(([col, row]) => col === tuple[0] && row === tuple[1]);
+                if (!exists) {
+                    activation_count.push(tuple);
+                }
+            });
+        };
+        processCoordinates(primary_coordinates);
+        processCoordinates(secondary_coordinates);
+        processCoordinates(tertiary_coordinates);
         console.log("Number of containers activated:", activation_count.length);
-
     }, [x_position, y_position]);
     return (
         <div className='grid_control'>
@@ -255,16 +437,21 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                         const primary_tile_subset: Array<TileCoordinate> = primary_container_subset.map(tile => (
                             {tile_column: tile.tile_column, tile_row: tile.tile_row}
                         ));
-                        // Get secondary data for just this condatiner
+                        // Get secondary data for just this container
                         const secondary_container_subset: Array<TileContainerCoordinate> = secondary_coordinates
                         .filter(sc => sc.container_row == row_index && sc.container_column == col_index);
-                        const secondary_tile_subset: Array<TileCoordinate> = secondary_container_subset.map(tile =>(
-                            {tile_column: tile.tile_column, tile_row: tile.tile_row}
-                        ));
+                        const secondary_tile_subset: Array<TileCoordinate> = secondary_container_subset
+                        .map(tile =>({tile_column: tile.tile_column, tile_row: tile.tile_row}));
+                        // Get tertiary data for just this container
+                        const tertiary_container_subset: Array<TileContainerCoordinate> = tertiary_coordinates
+                        .filter(tc => tc.container_row == row_index && tc.container_column == col_index);
+                        const tertiary_tile_subset: Array<TileCoordinate> = tertiary_container_subset
+                        .map(tile => ({tile_column: tile.tile_column, tile_row: tile.tile_row}));
                         current_data = {
                             ...current_data,
                             primary_tiles: primary_tile_subset,
-                            secondary_tiles: secondary_tile_subset
+                            secondary_tiles: secondary_tile_subset,
+                            tertiary_tiles: tertiary_tile_subset
                         };
                         additional_props = {active_data: current_data}
                     return(

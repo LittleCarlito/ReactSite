@@ -1,5 +1,5 @@
 .tile {
-    border: 3px solid greenyellow;
+    /* border: 3px solid greenyellow; */
     background-color: rgba(0, 0, 0, 0);
     width: --grid_tile_size;
     height: --grid_tile_size;
@@ -10,7 +10,7 @@
 }
 
 .grid_container {
-    border: 5px solid red;
+    /* border: 5px solid red; */
     background-color: rgba(0, 0, 0, 0);
     display: grid;
     grid-auto-flow: row;
