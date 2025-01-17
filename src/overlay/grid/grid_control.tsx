@@ -219,7 +219,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 upper_right_secondary.tile_row = row_count_property - 1;
                 upper_secondary.container_row -= 1;
                 upper_secondary.tile_row = row_count_property - 2;
-                // TODO Tertiary adjustments
+                // Tertiary adjustments
                 left_upper_tertiary.container_row -= 1;
                 left_upper_tertiary.tile_row = row_count_property - 1;
                 right_upper_tertiary.container_row -= 1;
@@ -242,7 +242,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 lower_right_secondary.tile_row = 0;
                 lower_secondary.container_row += 1;
                 lower_secondary.tile_row = 1;
-                // TODO Tertiary adjustments
+                // Tertiary adjustments
                 left_lower_tertiary.container_row += 1;
                 left_lower_tertiary.tile_row = 0;
                 right_lower_tertiary.container_row += 1;
@@ -265,7 +265,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 lower_left_secondary.tile_column = column_count_property - 1;
                 left_secondary.container_column -= 1;
                 left_secondary.tile_column = column_count_property - 2;
-                // TODO Tertiary adjustments
+                // Tertiary adjustments
                 lower_left_tertiary.container_column -= 1;
                 lower_left_tertiary.tile_column = column_count_property - 1;
                 upper_left_tertiary.container_column -= 1;
@@ -288,7 +288,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 lower_right_secondary.tile_column = 0;
                 right_secondary.container_column += 1;
                 right_secondary.tile_column = 1;
-                // TODO Tertiary adjustments
+                // Tertiary adjustments
                 lower_right_tertiary.container_column += 1;
                 lower_right_tertiary.tile_column = 0;
                 upper_right_tertiary.container_column += 1;
@@ -307,7 +307,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 // Secondary adjustments
                 upper_secondary.container_row -= 1;
                 upper_secondary.tile_row = row_count_property - 1;
-                // TODO Tertiary adjustments
+                // Tertiary adjustments
                 upper_left_tertiary.container_row -= 1;
                 upper_left_tertiary.tile_row = row_count_property - 1;
                 upper_right_tertiary.container_row -= 1;
@@ -320,7 +320,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 // Secondary adjustments
                 lower_secondary.container_row += 1;
                 lower_secondary.tile_row = 0;
-                // TODO Tertiary adjustments
+                // Tertiary adjustments
                 lower_left_tertiary.container_row += 1;
                 lower_left_tertiary.tile_row = 0;
                 lower_right_tertiary.container_row += 1;
@@ -333,7 +333,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 // Secondary adjustments
                 left_secondary.container_column -= 1;
                 left_secondary.tile_column = column_count_property - 1;
-                // TODO Tertiary adjustments
+                // Tertiary adjustments
                 left_upper_tertiary.container_column -= 1;
                 left_upper_tertiary.tile_column = column_count_property - 1;
                 left_lower_tertiary.container_column -= 1;
@@ -346,7 +346,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 // Secondary adjustments
                 right_secondary.container_column += 1;
                 right_secondary.tile_column = 0;
-                // TODO Tertiary adjustments
+                // Tertiary adjustments
                 right_upper_tertiary.container_column += 1;
                 right_upper_tertiary.tile_column = 0;
                 right_lower_tertiary.container_column += 1;
@@ -381,10 +381,6 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 right_tertiary.tile_column = 0;
             }
         }
-
-        // TODO OOOOO
-        // TODO Determine tertiary tiles
-
         // Set coordinates for rendering
         set_active_coordinates({ container_column: active_container_column, tile_column: active_panel_column, 
             container_row: active_container_row, tile_row: active_panel_row });
@@ -392,7 +388,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
         // Set secondary coordinates for rendering
         set_secondary_coorindates([lower_secondary, upper_secondary, left_secondary, right_secondary, 
             upper_left_secondary, upper_right_secondary, lower_left_secondary, lower_right_secondary]);
-        // TODO Set tertiary coordinates for rendering
+        // Set tertiary coordinates for rendering
         set_tertiary_coorindates([upper_right_tertiary, upper_left_tertiary, right_upper_tertiary, left_upper_tertiary,
             lower_right_tertiary, lower_left_tertiary, right_lower_tertiary, left_lower_tertiary,
             upper_tertiary, lower_tertiary, left_tertiary, right_tertiary]);
@@ -465,6 +461,8 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                     })}
                 </div>
             ))}
+            {/* TODO OOOOO */}
+            {/* TODO Attempt to refactor GridDiamond into a component and have it here */}
         </div>
     );
 }
