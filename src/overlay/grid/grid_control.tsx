@@ -2,16 +2,16 @@ import { useState, useEffect } from 'react';
 import GridContainer from './grid_container';
 import { TileContainerCoordinate, TileCoordinate, ActiveData } from '../../types';
 import './grid.css'
-import { calculate_id } from '../../utils';
+import { resolve_container_id } from '../../util';
 
 type GridControlProps = {
     x_position: number;
     y_position: number;
 }
 
-enum LEVEL {
+enum TYPE  {
     ACTIVE,
-    PRIMARY,
+    PRIAMRY,
     SECONDARY,
     TERTIARY
 }
@@ -36,9 +36,9 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
     });
     // TODO Convert these to TileCoordinates instead of TileContainerCoordinates
     // Primary, secondary, and tertiary activated coordinates
-    const [primary_coordinates, set_primary_coordinates] = useState<Map<number, TileCoordinate[]>>(new Map<number, TileCoordinate[]>())
-    const [secondary_coordinates, set_secondary_coordinates] = useState<Map<number,TileCoordinate[]>>(new Map<number, TileCoordinate[]>())
-    const [tertiary_coordinates, set_tertiary_coordinates] = useState<Map<number, TileCoordinate[]>>(new Map<number, TileCoordinate[]>())
+    const [primary_coordinates, set_primary_coorindates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
+    const [secondary_coordinates, set_secondary_coorindates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
+    const [tertiary_coordinates, set_tertiary_coorindates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
 
     useEffect(() => {
         const handle_resize = () => {
@@ -51,6 +51,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
 
     // Based off given x and y params calculate which GridContainer in the matrix contains the active tile
     useEffect(() => {
+        // TODO Get this to a data object
         // Determine active column/row
         let active_container_column: number = Math.trunc(x_position / container_width);
         const active_panel_column = Math.trunc((x_position % container_width) / tile_size_property);
@@ -390,39 +391,68 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
             }
         }
 
-        const update_coordinates = (coordinate_level: LEVEL, coordinate_data: TileContainerCoordinate[]) => {
-            let update_map: Map<number, TileCoordinate[]> = new Map<number, TileCoordinate[]>();
-            coordinate_data.forEach(c =>{
-                const coordinate_id: number = calculate_id(c.container_row, c.container_column, column_count_property);
-                const existing_values: TileCoordinate[] = update_map.get(coordinate_id) ?? [];
-                update_map.set(coordinate_id, [...existing_values, c])
+        const update_coordinate = (incoming_type: TYPE, incoming_data: TileContainerCoordinate[]) => {
+            let primary_update_map = new Map<string, TileCoordinate[]>();
+            let secondary_update_map = new Map<string, TileCoordinate[]>();
+            let tertiary_update_map = new Map<string, TileCoordinate[]>();
+            incoming_data.forEach(tc => {
+                const container_id: string = resolve_container_id(tc.container_column, tc.container_row, column_count_property);
+                switch(incoming_type) {
+                    case TYPE.ACTIVE:
+                        set_active_coordinates(tc);
+                        break;
+                    case TYPE.PRIAMRY:
+                        const new_primary_coord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
+                        const existing_primary_data: TileCoordinate[] = primary_update_map.get(container_id) ?? [];
+                        primary_update_map.set(container_id, [...existing_primary_data, new_primary_coord]);
+                        break;
+                    case TYPE.SECONDARY:
+                        const new_secondary_coord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
+                        const existing_secondary_data: TileCoordinate[] = secondary_update_map.get(container_id) ?? [];
+                        secondary_update_map.set(container_id, [...existing_secondary_data, new_secondary_coord]);
+                        break;
+                    case TYPE.TERTIARY:
+                        const new_tertiary_coord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
+                        const existing_tertiary_data: TileCoordinate[] = tertiary_update_map.get(container_id) ?? [];
+                        tertiary_update_map.set(container_id, [...existing_tertiary_data, new_tertiary_coord]);
+                        break;
+                    default:
+                        console.error(`Provided type ${incoming_type} is not supported for Map updates`);
+                }
             });
-            switch(coordinate_level) {
-                case LEVEL.ACTIVE:
-                    set_active_coordinates(coordinate_data[0]);
+            switch(incoming_type) {
+                case TYPE.PRIAMRY:
+                    set_primary_coorindates(primary_update_map);
                     break;
-                case LEVEL.PRIMARY:
-                    set_primary_coordinates(update_map);
+                case TYPE.SECONDARY:
+                    set_secondary_coorindates(secondary_update_map);
                     break;
-                case LEVEL.SECONDARY:
-                    set_secondary_coordinates(update_map);
+                case TYPE.TERTIARY:
+                    set_tertiary_coorindates(tertiary_update_map);
                     break;
-                case LEVEL.TERTIARY:
-                    set_tertiary_coordinates(update_map);
-                    break;
-                default:
-                    console.error(`Provided coordinate level ${coordinate_level} is not supported for Map updates`);
             }
-        };
+        }
+
         // Set coordinates for rendering
-        update_coordinates(LEVEL.ACTIVE, [{ container_column: active_container_column, tile_column: active_panel_column, 
-            container_row: active_container_row, tile_row: active_panel_row }]);
-        update_coordinates(LEVEL.PRIMARY, [lower_primary, upper_primary, left_primary, right_primary]);
-        update_coordinates(LEVEL.SECONDARY, [lower_secondary, upper_secondary, left_secondary, right_secondary, 
+        update_coordinate(TYPE.ACTIVE, [{container_column: active_container_column, tile_column: active_panel_column, 
+            container_row: active_container_row, tile_row: active_panel_row}]);
+        update_coordinate(TYPE.PRIAMRY, [lower_primary, upper_primary, left_primary, right_primary]);
+        // Set secondary coordinates for rendering
+        update_coordinate(TYPE.SECONDARY, [lower_secondary, upper_secondary, left_secondary, right_secondary, 
             upper_left_secondary, upper_right_secondary, lower_left_secondary, lower_right_secondary]);
-        update_coordinates(LEVEL.TERTIARY, [upper_right_tertiary, upper_left_tertiary, right_upper_tertiary, left_upper_tertiary,
+        // Set tertiary coordinates for rendering
+        update_coordinate(TYPE.TERTIARY, [upper_right_tertiary, upper_left_tertiary, right_upper_tertiary, left_upper_tertiary,
             lower_right_tertiary, lower_left_tertiary, right_lower_tertiary, left_lower_tertiary,
             upper_tertiary, lower_tertiary, left_tertiary, right_tertiary]);
+        // Debug log for containers activated
+        let activation_count: number = 0;
+        const processCoordinates = (coordinates: Map<string, TileCoordinate[]>) => {
+            activation_count += coordinates.size;
+        };
+        processCoordinates(primary_coordinates);
+        processCoordinates(secondary_coordinates);
+        processCoordinates(tertiary_coordinates);
+        console.log("Number of containers activated:", activation_count);
     }, [x_position, y_position]);
     return (
         <div className='grid_control'>
@@ -441,14 +471,15 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                                 ...current_data,
                                 active_tile: current_tile
                             }
-                        }
+                        } 
+                        // TODO Consider changing this to map so this is less intensive
+                        const container_id: string = resolve_container_id(col_index, row_index, column_count_property);
                         // Get primary data for just this container
-                        const conatiner_id: number = calculate_id(row_index, col_index, column_count_property);
-                        const primary_tile_subset: Array<TileCoordinate> = primary_coordinates.get(conatiner_id) ?? [];
+                        const primary_tile_subset: Array<TileCoordinate> = primary_coordinates.get(container_id) ?? [];
                         // Get secondary data for just this container
-                        const secondary_tile_subset: Array<TileCoordinate> = secondary_coordinates.get(conatiner_id) ?? [];
+                        const secondary_tile_subset: Array<TileCoordinate> = secondary_coordinates.get(container_id) ?? [];
                         // Get tertiary data for just this container
-                        const tertiary_tile_subset: Array<TileCoordinate> = tertiary_coordinates.get(conatiner_id) ?? [];
+                        const tertiary_tile_subset: Array<TileCoordinate> = tertiary_coordinates.get(container_id) ?? [];
                         current_data = {
                             ...current_data,
                             primary_tiles: primary_tile_subset,
