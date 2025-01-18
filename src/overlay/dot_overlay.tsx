@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import MovingDot from "./pointer/moving_dot";
 import GridControl from "./grid/grid_control"
 import './overlay.css'
 
@@ -13,10 +12,10 @@ export default function DotOverlay() {
     return (
     <div className='overlay_container' onPointerMove={e => { set_position({ x: e.clientX, y: e.clientY }); }}>
         <div className='moving_dot'>
-            <MovingDot x_position={position.x} y_position={position.y}/>
+            {/* Disabling for now */}
+            {/* <MovingDot x_position={position.x} y_position={position.y}/> */}
         </div>
         <div className='dot_grid'>
-            {/*  TODO Need to pass in mouse x and y and have GridControl activate the proper panels */}
             <GridControl x_position={position.x} y_position={position.y}/>
         </div>
     </div>
