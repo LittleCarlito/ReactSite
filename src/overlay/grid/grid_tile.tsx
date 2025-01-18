@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 
 interface GridTIleProps {
   // TODO Get these to a singluar object
+  is_mouse?: boolean;
   is_active?: boolean;
   is_primary?: boolean;
   is_secondary?: boolean;
   is_tertiary?: boolean;
+  is_inverted?: boolean;
 }
 
 const valid_colors: Array<string> = [
@@ -20,7 +22,7 @@ const valid_colors: Array<string> = [
   "#FF69B4", // Hot pink
 ];
 
-export default function GridTile({ is_active, is_primary, is_secondary, is_tertiary }: GridTIleProps) {
+export default function GridTile({ is_mouse, is_active, is_primary, is_secondary, is_tertiary, is_inverted }: GridTIleProps) {
   const [background_color, set_background_color] = useState<string>('transparent');
   const [grayscale_level, set_grayscale] = useState<number>(100);
 
@@ -30,7 +32,7 @@ export default function GridTile({ is_active, is_primary, is_secondary, is_terti
     set_background_color(valid_colors[rand_index]);
     // Determine grayscale
     let calced_grayscale: number = 100;
-    if (is_active) {
+    if (is_mouse || is_active) {
       calced_grayscale = 0;
     } else if(is_primary){
       calced_grayscale = 20;
@@ -39,8 +41,9 @@ export default function GridTile({ is_active, is_primary, is_secondary, is_terti
     } else if(is_tertiary) {
       calced_grayscale = 80;
     }
+    calced_grayscale = is_inverted ? 0 : calced_grayscale;
     set_grayscale(calced_grayscale);
-  }, [is_active, is_primary, is_secondary, is_tertiary]);
+  }, [is_mouse, is_active, is_primary, is_secondary, is_tertiary, is_inverted]);
 
   return (
     <>

@@ -10,28 +10,38 @@ type GridContainerProps = {
 }
 
 export default function GridContainer({active_data, column_count, row_count}: GridContainerProps) {
-    const [active_id, set_active_id] = useState<number>(-1);
-    const [primary_ids, set_primary_ids] = useState<Array<number>>([]);
-    const [secondary_ids, set_secondary_ids] = useState<Array<number>>([]);
-    const [tertiary_ids, set_tertiary_ids] = useState<Array<number>>([]);
+    const [mouse_id, set_mouse_id] = useState<number>(-1);
+    const [activated_ids, set_activated_ids] = useState<number[]>([]);
+    const [primary_ids, set_primary_ids] = useState<number[]>([]);
+    const [secondary_ids, set_secondary_ids] = useState<number[]>([]);
+    const [tertiary_ids, set_tertiary_ids] = useState<number[]>([]);
 
     useEffect(() => {
-        // Check active data for active tile 
-        const x_position = active_data?.active_tile?.tile_column;
-        const y_position = active_data?.active_tile?.tile_row;
-        if(x_position != null && y_position != null) {
-            if(x_position !== -1 && y_position !== -1) {
-                const calculated_active_id: number = resolove_id(x_position, y_position, column_count);
-                // console.log(`Setting ${calculated_active_id} as active as a result of ${y_position} and ${x_position} coordinates`)
-                set_active_id(calculated_active_id);
-            }
-        } 
+        // Check mouse tile data
+        if(active_data?.mouse_tile) {
+            const calculated_mouse_id: number = resolove_id(active_data?.mouse_tile.tile_column, active_data?.mouse_tile.tile_row, column_count);
+            console.log(`Setting ${calculated_mouse_id} as mouse tile as a result of ${active_data?.mouse_tile.tile_row} and ${active_data?.mouse_tile.tile_column} coordinates`)
+            set_mouse_id(calculated_mouse_id);
+        }
         else {
-            set_active_id(-1);
+            set_mouse_id(-1);
+        }
+        // Check active data for activated tiles
+        if(active_data?.activated_tiles) {
+            const new_activated_ids: number[] = active_data.activated_tiles
+            .map(tc => {
+                const activated_id: number = resolove_id(tc.tile_column, tc.tile_row, column_count);
+                console.log(`Setting ${activated_id} as actived as a result of ${tc.tile_row} and ${tc.tile_column} coordinates`)
+                return activated_id;
+            });
+            set_activated_ids([...activated_ids, ...new_activated_ids]);
+        }
+        else {
+            set_activated_ids([]);
         }
         // Check active data for primary tiles
         if(active_data?.primary_tiles) {
-            const new_primary_ids: Array<number> = active_data.primary_tiles
+            const new_primary_ids: number[] = active_data.primary_tiles
             .map(tc => {
                 const primary_id: number = resolove_id(tc.tile_column, tc.tile_row, column_count);
                 // console.log(`Setting ${primary_id} as primary as a result of ${tc.tile_row} and ${tc.tile_column} coordinates`)
@@ -71,13 +81,15 @@ export default function GridContainer({active_data, column_count, row_count}: Gr
     return (
         <div className="grid_container">
             {Array.from({ length: column_count * row_count }).map((_, tile_index) => {
-                const is_active = tile_index == active_id;
-                const is_primary = primary_ids.includes(tile_index);
-                const is_secondary = secondary_ids.includes(tile_index);
-                const is_tertiary = tertiary_ids.includes(tile_index);
+                const is_mouse: boolean = mouse_id == tile_index;
+                const is_active: boolean = activated_ids.includes(tile_index);
+                const is_primary: boolean = primary_ids.includes(tile_index);
+                const is_secondary: boolean = secondary_ids.includes(tile_index);
+                const is_tertiary: boolean = tertiary_ids.includes(tile_index);
                 return(
                     <GridTile 
                         key={tile_index} 
+                        is_mouse={is_mouse}
                         is_active={is_active} 
                         is_primary={is_primary}
                         is_secondary={is_secondary}

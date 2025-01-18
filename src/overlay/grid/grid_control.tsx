@@ -12,11 +12,22 @@ type GridControlProps = {
 }
 
 enum TYPE  {
+    MOUSE,
     ACTIVE,
     PRIAMRY,
     SECONDARY,
     TERTIARY
 }
+
+// TODO OOOOO
+// TODO Need to create active group storage
+//          Stores coordiantes of tiles that have been activeated that aren't to be affected by clicks, or grid diamond movement
+// TODO Need to detect click down and click up events
+// TODO Click down makes all tiles in diamond deactivated (unless in the active group)
+//          Need to store coordinates of current grid diamond for on release event
+//              Better yet make it a lambda that is passed and just called on release
+// TODO Click release makes all tiles in diamond that were clicked, and not in active group, active
+//          All these tiles should then be added to the active group
 
 export default function GridControl( {x_position, y_position}: GridControlProps ) {
     // Get the value of a CSS variables
@@ -30,48 +41,59 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
     const grid_diamond: GridDiamond = new GridDiamond(container_width, container_height, tile_size_property, row_count_property, column_count_property);
     const [width_container_count, set_width_count] = useState((window.innerWidth / container_width) + 1)
     const [height_container_count, set_height_count] = useState((window.innerHeight / container_height) + 1)
+    // Activated variables
+    const [is_mouse_down, set_mouse_down] = useState<boolean>(false);
     // Activated coordinates
-    const [active_container_coordinate, set_active_coordinates] = useState<TileContainerCoordinate>({
-        container_column: -1,
+    const [mouse_tile, set_mouse_tile] = useState<TileContainerCoordinate>({
         tile_column: -1,
-        container_row: -1,
-        tile_row: -1
+        tile_row: -1,
+        container_column: -1,
+        container_row: -1
     });
-    // Primary, secondary, and tertiary activated coordinates
+    const [active_coordinates, set_active_coordinates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileContainerCoordinate[]>());
     const [primary_coordinates, set_primary_coorindates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
     const [secondary_coordinates, set_secondary_coorindates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
     const [tertiary_coordinates, set_tertiary_coorindates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
 
     const update_coordinate = (incoming_type: TYPE, incoming_data: TileContainerCoordinate[]) => {
+        let active_update_map = new Map<string, TileCoordinate[]>();
         let primary_update_map = new Map<string, TileCoordinate[]>();
         let secondary_update_map = new Map<string, TileCoordinate[]>();
         let tertiary_update_map = new Map<string, TileCoordinate[]>();
         incoming_data.forEach(tc => {
             const container_id: string = resolve_container_id(tc.container_column, tc.container_row, column_count_property);
             switch(incoming_type) {
+                case TYPE.MOUSE:
+                    set_mouse_tile(tc);
+                    break;
                 case TYPE.ACTIVE:
-                    set_active_coordinates(tc);
+                    const new_active_cord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
+                    const existing_active_data: TileCoordinate[] = active_update_map.get(container_id)??[];
+                    active_update_map.set(container_id, [...existing_active_data, new_active_cord]);
                     break;
                 case TYPE.PRIAMRY:
-                    const new_primary_coord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
-                    const existing_primary_data: TileCoordinate[] = primary_update_map.get(container_id) ?? [];
-                    primary_update_map.set(container_id, [...existing_primary_data, new_primary_coord]);
+                    const new_primary_cord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
+                    const existing_primary_data: TileCoordinate[] = primary_update_map.get(container_id)??[];
+                    primary_update_map.set(container_id, [...existing_primary_data, new_primary_cord]);
                     break;
                 case TYPE.SECONDARY:
-                    const new_secondary_coord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
-                    const existing_secondary_data: TileCoordinate[] = secondary_update_map.get(container_id) ?? [];
-                    secondary_update_map.set(container_id, [...existing_secondary_data, new_secondary_coord]);
+                    const new_secondary_cord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
+                    const existing_secondary_data: TileCoordinate[] = secondary_update_map.get(container_id)??[];
+                    secondary_update_map.set(container_id, [...existing_secondary_data, new_secondary_cord]);
                     break;
                 case TYPE.TERTIARY:
-                    const new_tertiary_coord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
-                    const existing_tertiary_data: TileCoordinate[] = tertiary_update_map.get(container_id) ?? [];
-                    tertiary_update_map.set(container_id, [...existing_tertiary_data, new_tertiary_coord]);
+                    const new_tertiary_cord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
+                    const existing_tertiary_data: TileCoordinate[] = tertiary_update_map.get(container_id)??[];
+                    tertiary_update_map.set(container_id, [...existing_tertiary_data, new_tertiary_cord]);
                     break;
                 default:
                     console.error(`Provided type ${incoming_type} is not supported for Map updates`);
             }
         });
         switch(incoming_type) {
+            case TYPE.ACTIVE:
+                set_active_coordinates(active_update_map);
+                break;
             case TYPE.PRIAMRY:
                 set_primary_coorindates(primary_update_map);
                 break;
@@ -83,6 +105,17 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
                 break;
         }
     }
+
+    // TODO Create onMouseDown handler method
+    const handle_mouse_down = () => {
+        set_mouse_down(true);
+        const current_diamond: Map<string, TileContainerCoordinate> = grid_diamond.calculate_coordinates(x_position, y_position);
+    };
+
+    // TODO Create onMouseUp hanlder method
+    const handle_mouse_up = () => {
+        set_mouse_down(false);
+    };
 
     useEffect(() => {
         const handle_resize = () => {
@@ -98,7 +131,7 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
         // Determine diamond grid and update containers
         const diamond_coordinates: Map<string, TileContainerCoordinate> = grid_diamond.calculate_coordinates(x_position, y_position);
         // Set coordinates for rendering
-        update_coordinate(TYPE.ACTIVE, [diamond_coordinates.get(DiamondCord.ACTIVE)??UNKNOWN_CORD]);
+        update_coordinate(TYPE.MOUSE, [diamond_coordinates.get(DiamondCord.ACTIVE)??UNKNOWN_CORD]);
         update_coordinate(TYPE.PRIAMRY, [
             diamond_coordinates.get(DiamondCord.LOWER_PRIMARY)??UNKNOWN_CORD,
             diamond_coordinates.get(DiamondCord.UPPER_PRIMARY)??UNKNOWN_CORD,
@@ -134,32 +167,28 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
     }, [x_position, y_position]);
 
     return (
+        // TODO Add onMouseDown and onMouseUp hadnling methods to grid_control div
         <div className='grid_control'>
             {Array.from({ length: height_container_count}).map((_, row_index) => (
                 <div key={row_index} style={{ display: 'flex' }}>
                     {Array.from({ length: width_container_count }).map((_, col_index) => {
                         let additional_props = {}
-                        let current_data: ActiveData = {}
-                        // Get active data for container
-                        if (row_index === active_container_coordinate.container_row 
-                            && col_index === active_container_coordinate.container_column){
-                            const current_tile: TileCoordinate = {
-                                tile_column: active_container_coordinate.tile_column,
-                                tile_row: active_container_coordinate.tile_row
-                            }
-                            current_data = {
-                                ...current_data,
-                                active_tile: current_tile
-                            }
-                        } 
-                        // TODO Consider changing this to map so this is less intensive
                         const container_id: string = resolve_container_id(col_index, row_index, column_count_property);
-                        // Get other data for container
-                        const primary_tile_subset: Array<TileCoordinate> = primary_coordinates.get(container_id)??[];
-                        const secondary_tile_subset: Array<TileCoordinate> = secondary_coordinates.get(container_id)??[];
-                        const tertiary_tile_subset: Array<TileCoordinate> = tertiary_coordinates.get(container_id)??[];
+                        let current_data: ActiveData = {};
+                        // Determine if mouse container
+                        if(mouse_tile.container_column == col_index && mouse_tile.container_row == row_index) {
+                            current_data = {
+                                mouse_tile: mouse_tile
+                            }
+                        };
+                        // Get tile coordinates
+                        const active_tile_subset: TileCoordinate[] = active_coordinates.get(container_id)??[];
+                        const primary_tile_subset: TileCoordinate[] = primary_coordinates.get(container_id)??[];
+                        const secondary_tile_subset: TileCoordinate[] = secondary_coordinates.get(container_id)??[];
+                        const tertiary_tile_subset: TileCoordinate[] = tertiary_coordinates.get(container_id)??[];
                         current_data = {
                             ...current_data,
+                            activated_tiles: active_tile_subset,
                             primary_tiles: primary_tile_subset,
                             secondary_tiles: secondary_tile_subset,
                             tertiary_tiles: tertiary_tile_subset
