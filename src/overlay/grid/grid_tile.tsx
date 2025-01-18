@@ -18,14 +18,14 @@ export default function GridTile({ is_active, is_primary, is_secondary, is_terti
       set_background_color(valid_colors[rand_index]);
       // FIXME Set to below for debugging
       if(is_primary){
-        set_opactiy(1);
-        // set_opactiy(.65);
+        // set_opactiy(1);
+        set_opactiy(.6);
       } else if(is_secondary) {
-        set_opactiy(1);
-        // set_opactiy(.4);
+        // set_opactiy(1);
+        set_opactiy(.3);
       } else if(is_tertiary) {
-        set_opactiy(1);
-        // set_opactiy(.05)
+        // set_opactiy(1);
+        set_opactiy(.1)
       } else {
         set_opactiy(1);
       }
