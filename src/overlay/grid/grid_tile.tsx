@@ -8,13 +8,24 @@ interface GridTIleProps {
   is_tertiary?: boolean;
 }
 
+const valid_colors: Array<string> = [
+  'red',
+  'orange',
+  'yellow',
+  "#39FF14", // Neon green (close to highlighter green)
+  "aqua", // Named cyan
+  'blue',
+  'purple',
+  "#FF00FF", // Magenta
+  "#FF69B4", // Hot pink
+];
+
 export default function GridTile({ is_active, is_primary, is_secondary, is_tertiary }: GridTIleProps) {
   const [background_color, set_background_color] = useState<string>('transparent');
   const [grayscale_level, set_grayscale] = useState<number>(100);
 
   useEffect(() => {
     // Determine background color
-    const valid_colors: Array<string> = ['red', 'green', 'yellow', 'blue', 'orange', 'purple', 'pink'];
     const rand_index = Math.floor(Math.random() * valid_colors.length);
     set_background_color(valid_colors[rand_index]);
     // Determine grayscale
@@ -30,7 +41,6 @@ export default function GridTile({ is_active, is_primary, is_secondary, is_terti
     }
     set_grayscale(calced_grayscale);
   }, [is_active, is_primary, is_secondary, is_tertiary]);
-
 
   return (
     <>
