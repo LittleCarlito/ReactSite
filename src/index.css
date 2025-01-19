@@ -12,9 +12,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+/* Container size shoudl be width x tile size */
+  --grid_container_size: 125px;
   --grid_tile_size: 25px;
-  --grid_column_container_count: 10;
-  --grid_row_container_count: 10;
+  --grid_column_container_count: 5;
+  --grid_row_container_count: 5;
 }
 
 a {

@@ -14,12 +14,15 @@ type GridControlProps = {
 enum TYPE  {
     MOUSE,
     ACTIVE,
+    DISABLED,
     PRIAMRY,
     SECONDARY,
-    TERTIARY
+    TERTIARY,
+    QUEUED
 }
 
-// TODO OOOOO
+// TODO OOOOOO
+// TODO Need to add override property to disable all coloring except those in the activated category
 // TODO Need to create active group storage
 //          Stores coordiantes of tiles that have been activeated that aren't to be affected by clicks, or grid diamond movement
 // TODO Need to detect click down and click up events
@@ -43,48 +46,56 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
     const [height_container_count, set_height_count] = useState((window.innerHeight / container_height) + 1)
     // Activated variables
     const [is_mouse_down, set_mouse_down] = useState<boolean>(false);
-    // Activated coordinates
+    const [active_coordinates, set_active_coordinates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
+    const [disabled_coordinates, set_disabled_coordinates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
+    const [primary_coordinates, set_primary_coorindates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
+    const [secondary_coordinates, set_secondary_coorindates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
+    const [tertiary_coordinates, set_tertiary_coorindates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
+    const [queued_coordinates, set_queued_coordinates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
     const [mouse_tile, set_mouse_tile] = useState<TileContainerCoordinate>({
         tile_column: -1,
         tile_row: -1,
         container_column: -1,
         container_row: -1
     });
-    const [active_coordinates, set_active_coordinates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileContainerCoordinate[]>());
-    const [primary_coordinates, set_primary_coorindates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
-    const [secondary_coordinates, set_secondary_coorindates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
-    const [tertiary_coordinates, set_tertiary_coorindates] = useState<Map<string, TileCoordinate[]>>(new Map<string, TileCoordinate[]>());
 
     const update_coordinate = (incoming_type: TYPE, incoming_data: TileContainerCoordinate[]) => {
         let active_update_map = new Map<string, TileCoordinate[]>();
+        let disabled_update_map = new Map<string, TileCoordinate[]>();
         let primary_update_map = new Map<string, TileCoordinate[]>();
         let secondary_update_map = new Map<string, TileCoordinate[]>();
         let tertiary_update_map = new Map<string, TileCoordinate[]>();
+        let queue_update_map = new Map<string, TileCoordinate[]>();
         incoming_data.forEach(tc => {
             const container_id: string = resolve_container_id(tc.container_column, tc.container_row, column_count_property);
+            const new_cord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
             switch(incoming_type) {
                 case TYPE.MOUSE:
                     set_mouse_tile(tc);
                     break;
                 case TYPE.ACTIVE:
-                    const new_active_cord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
                     const existing_active_data: TileCoordinate[] = active_update_map.get(container_id)??[];
-                    active_update_map.set(container_id, [...existing_active_data, new_active_cord]);
+                    active_update_map.set(container_id, [...existing_active_data, new_cord]);
+                    break;
+                case TYPE.DISABLED:
+                    const existing_disabled_data: TileCoordinate[] = disabled_update_map.get(container_id)??[];
+                    disabled_update_map.set(container_id, [...existing_disabled_data, new_cord]);
                     break;
                 case TYPE.PRIAMRY:
-                    const new_primary_cord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
                     const existing_primary_data: TileCoordinate[] = primary_update_map.get(container_id)??[];
-                    primary_update_map.set(container_id, [...existing_primary_data, new_primary_cord]);
+                    primary_update_map.set(container_id, [...existing_primary_data, new_cord]);
                     break;
                 case TYPE.SECONDARY:
-                    const new_secondary_cord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
                     const existing_secondary_data: TileCoordinate[] = secondary_update_map.get(container_id)??[];
-                    secondary_update_map.set(container_id, [...existing_secondary_data, new_secondary_cord]);
+                    secondary_update_map.set(container_id, [...existing_secondary_data, new_cord]);
                     break;
                 case TYPE.TERTIARY:
-                    const new_tertiary_cord: TileCoordinate = {tile_column: tc.tile_column, tile_row: tc.tile_row};
                     const existing_tertiary_data: TileCoordinate[] = tertiary_update_map.get(container_id)??[];
-                    tertiary_update_map.set(container_id, [...existing_tertiary_data, new_tertiary_cord]);
+                    tertiary_update_map.set(container_id, [...existing_tertiary_data, new_cord]);
+                    break;
+                case TYPE.QUEUED:
+                    const existing_queued_data: TileCoordinate[] = queue_update_map.get(container_id)??[];
+                    queue_update_map.set(container_id, [...existing_queued_data, new_cord]);
                     break;
                 default:
                     console.error(`Provided type ${incoming_type} is not supported for Map updates`);
@@ -92,7 +103,11 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
         });
         switch(incoming_type) {
             case TYPE.ACTIVE:
+                // TODO Here is where we would need to add handling to keep activated coordiantes set between states
                 set_active_coordinates(active_update_map);
+                break;
+            case TYPE.DISABLED:
+                set_disabled_coordinates(disabled_update_map);
                 break;
             case TYPE.PRIAMRY:
                 set_primary_coorindates(primary_update_map);
@@ -103,6 +118,9 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
             case TYPE.TERTIARY:
                 set_tertiary_coorindates(tertiary_update_map);
                 break;
+            case TYPE.QUEUED:
+                set_queued_coordinates(queue_update_map);
+                break;
         }
     }
 
@@ -110,11 +128,25 @@ export default function GridControl( {x_position, y_position}: GridControlProps 
     const handle_mouse_down = () => {
         set_mouse_down(true);
         const current_diamond: Map<string, TileContainerCoordinate> = grid_diamond.calculate_coordinates(x_position, y_position);
+        let diamond_cords: TileContainerCoordinate[] = [];
+        current_diamond.forEach(tce => {
+            diamond_cords = [...diamond_cords, tce]
+        });
+        update_coordinate(TYPE.QUEUED, diamond_cords);
+        // TODO Need to convert TileContainerCoordinate to TileCoordinate and store them in intermediate map storage
+        //          Held in intermediate storage until handle_mouse_up is processed
+        //              The coordinates are then added to the activated list
+        // TODO Need to store and set disabled state for the coordinates until ahndle_mouse_up is handled
+        //          Disabled needs to keep full grayscale unless the tile is activated
     };
 
     // TODO Create onMouseUp hanlder method
     const handle_mouse_up = () => {
         set_mouse_down(false);
+        // TODO For now just check the intermediate map storage for waiting to be activated tile coordinates
+        //          Add these coordinates to the activated coordinates map so they are lit up
+        //              Ensure this map stays persistent so activated tiles stay activated
+        // TODO Clear intermediate map storage when done handling everything in there
     };
 
     useEffect(() => {

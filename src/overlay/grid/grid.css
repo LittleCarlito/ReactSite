@@ -18,8 +18,8 @@
     grid-template-rows: repeat(var(--grid_row_container_count), var(--grid_tile_size));
     gap: 0px;
     /* TODO Make this a calculation so it works with resizing the tiles */
-    width: 250px;
-    height: 250px;
+    width: --grid_container_size;
+    height: --grid_container_size;
     box-sizing: border-box;
 }
 
